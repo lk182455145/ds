@@ -1,10 +1,11 @@
 package com.leadingsoft.ds.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.util.MultiValueMap;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.leadingsoft.ds.dto.QueryResult;
-import com.leadingsoft.ds.dto.ResultDto;
 import com.leadingsoft.ds.entities.Application;
 import com.leadingsoft.ds.services.ApplicationService;
 import com.leadingsoft.ds.services.DataService;
@@ -48,66 +47,67 @@ public class DataServiceController {
 	@Autowired
 	private ApplicationService appService;
 
-	@GetMapping(value = "{serviceName}", params = { "!rows" })
-	public ResultDto<QueryResult> query(
+	@GetMapping(value = "{serviceName}")
+	public Page<Map<String, Object>> query(
 			@PathVariable("serviceName") String service,
 			@RequestParam(value = "draw", required = false) String draw,
 			@RequestParam("token") String token,
 			@PageableDefault(page = 0, size = 10) Pageable pageable,
-			@RequestParam MultiValueMap<String, String> params) {
-		params = remove(params);
+			@RequestParam MultiValueMap<String, String> params) throws Exception {
+//		params = remove(params);
 		if (pageable.getPageSize() > 1000) {
-			return ResultDto.failure("The size param is to large");
+			throw new Exception("分页大小不能超所1000条");
 		}
 		if (!checnAuth(token)) {
-			return ResultDto.failure("The Token param is to error");
+			throw new Exception("Token参数错误");
 		}
 		try {
 			return query(draw, service, params, pageable);
 		} catch (Exception e) {
-			return ResultDto.failure(e.getMessage());
+			throw new Exception(e);
 		}
 	}
 
-	@GetMapping(value = "{serviceName}", params = { "rows" })
-	public ResultDto<QueryResult> query(
-			@PathVariable("serviceName") String service,
-			@RequestParam(value = "draw", required = false) String draw,
-			@RequestParam("token") String token,
-			@RequestParam(value = "page", required = false, defaultValue = "1") int page,
-			@RequestParam(value = "rows", required = false, defaultValue = "10") int rows,
-			@RequestParam MultiValueMap<String, String> params) {
-		params = remove(params);
+//	@GetMapping(value = "{serviceName}", params = { "rows" })
+//	public ResultDto<QueryResult> query(
+//			@PathVariable("serviceName") String service,
+//			@RequestParam(value = "draw", required = false) String draw,
+//			@RequestParam("token") String token,
+//			@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+//			@RequestParam(value = "rows", required = false, defaultValue = "10") int rows,
+//			@RequestParam MultiValueMap<String, String> params) {
+//		params = remove(params);
+//
+//		if (rows > 1000) {
+//			return ResultDto.failure("The rows param is to large");
+//		}
+//		if (!checnAuth(token)) {
+//			return ResultDto.failure("The Token param is to error");
+//		}
+//		Pageable pageable = PageRequest.of(page - 1, rows);
+//		try {
+//			return query(draw, service, params, pageable);
+//		} catch (Exception e) {
+//			return ResultDto.failure(e.getMessage());
+//		}
+//	}
 
-		if (rows > 1000) {
-			return ResultDto.failure("The rows param is to large");
-		}
-		if (!checnAuth(token)) {
-			return ResultDto.failure("The Token param is to error");
-		}
-		Pageable pageable = PageRequest.of(page - 1, rows);
-		try {
-			return query(draw, service, params, pageable);
-		} catch (Exception e) {
-			return ResultDto.failure(e.getMessage());
-		}
-	}
-
-	private ResultDto<QueryResult> query(String draw, String service, MultiValueMap<String, String> params,
+	private Page<Map<String, Object>> query(String draw, String service, MultiValueMap<String, String> params,
 			Pageable pageable) {
-		QueryResult result = dataService.queryData(service, params, pageable);
-		result.setDraw(draw);
-		return ResultDto.success(result);
+		return dataService.queryData(service, params, pageable);
+//		QueryResult result = dataService.queryData(service, params, pageable);
+//		result.setDraw(draw);
+//		return ResultDto.success(result);
 	}
 
-	private MultiValueMap<String, String> remove(MultiValueMap<String, String> params) {
-		params.remove("draw");
-		params.remove("token");
-		params.remove("page");
-		params.remove("rows");
-		params.remove("size");
-		return params;
-	}
+//	private MultiValueMap<String, String> remove(MultiValueMap<String, String> params) {
+//		params.remove("draw");
+//		params.remove("token");
+//		params.remove("page");
+//		params.remove("rows");
+//		params.remove("size");
+//		return params;
+//	}
 
 	// 检测应用是否授权
 	private boolean checnAuth(String token) {

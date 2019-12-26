@@ -7,12 +7,13 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
-import com.leadingsoft.ds.dto.QueryResult;
 import com.leadingsoft.ds.dto.DbConnectionDto.DBType;
 import com.leadingsoft.ds.entities.DbConnection;
 import com.leadingsoft.ds.entities.Svc;
@@ -37,7 +38,7 @@ public class DataServiceImpl implements DataService {
 
 	@Override
 	@Cacheable(cacheNames = { "resultCache" }, sync = true)
-	public QueryResult queryData(String service, MultiValueMap<String, String> params, Pageable pageable) {
+	public Page<Map<String, Object>> queryData(String service, MultiValueMap<String, String> params, Pageable pageable) {
 		Svc svc = svcService.findByName(service);
 		DbConnection cnn = svc.getConnection();
 		DBType type = cnn.getDbType();
@@ -49,10 +50,10 @@ public class DataServiceImpl implements DataService {
 		NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		Long count = jdbcTemplate.queryForObject(querySql.getCountSql(), querySql.getParameters(), Long.class);
 		List<Map<String, Object>> results = jdbcTemplate.queryForList(querySql.getQuerySql(), querySql.getParameters());
-		QueryResult queryResult = new QueryResult();
-		queryResult.setCount(count);
-		queryResult.setResult(results);
-		return queryResult;
+//		QueryResult queryResult = new QueryResult();
+//		queryResult.setCount(count);
+//		queryResult.setResult(results);
+		return new PageImpl<Map<String, Object>>(results, pageable, count);
 	}
 
 }

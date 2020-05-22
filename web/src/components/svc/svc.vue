@@ -95,16 +95,18 @@
     </el-form>
 
     <el-row>
-      <ele-data-tables :data="columns">
-        <el-table-column prop="columnName" label="列名称"/>
-        <el-table-column prop="columnTypeName" label="数据类型"/>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <a href="javascript:;" @click="addToParameter(scope.row)">添加到筛选</a>
-            <a href="javascript:;" @click="addToOrder(scope.row)">添加到排序</a>
-          </template>
-        </el-table-column>
-      </ele-data-tables>
+      <el-form>
+        <ele-data-tables :data="columns">
+          <el-table-column prop="columnName" label="列名称"/>
+          <el-table-column prop="columnTypeName" label="数据类型"/>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <a href="javascript:;" @click="addToParameter(scope.row)">添加到筛选</a>
+              <a href="javascript:;" @click="addToOrder(scope.row)">添加到排序</a>
+            </template>
+          </el-table-column>
+        </ele-data-tables>
+      </el-form>
     </el-row>
   </div>
 </template>

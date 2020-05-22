@@ -24,7 +24,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
@@ -74,28 +74,18 @@
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
-			<version>6.4.0.jre8</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.dm</groupId>
 			<artifactId>dm-common</artifactId>
 		</dependency>
-		
-		<!-- <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-test</artifactId>
-			<scope>test</scope>
-		</dependency> -->
+
 	</dependencies>
 
 	<build>
@@ -124,11 +114,11 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<datasource.url>jdbc:mysql://localhost:3306/ds?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;serverTimezone=Asia/Shanghai</datasource.url>
+				<datasource.url>jdbc:mysql://localhost/ds?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;serverTimezone=Asia/Shanghai</datasource.url>
 				<datasource.driver>com.mysql.cj.jdbc.Driver</datasource.driver>
 				<datasource.username>root</datasource.username>
-				<datasource.password>123456</datasource.password>
-				<datasource.platform>org.hibernate.dialect.MySQL55Dialect</datasource.platform>
+				<datasource.password>admin123456!@#</datasource.password>
+				<datasource.platform>org.hibernate.dialect.MySQL8Dialect</datasource.platform>
 			</properties>
 		</profile>
 	</profiles>

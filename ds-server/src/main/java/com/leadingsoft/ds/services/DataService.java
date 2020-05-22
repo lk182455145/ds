@@ -1,12 +1,13 @@
 package com.leadingsoft.ds.services;
 
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 
-import com.leadingsoft.ds.dto.QueryResult;
-
 public interface DataService {
 
-	QueryResult queryData(String service, MultiValueMap<String, String> params, Pageable pageable);
+    Page<Map<String, Object>> queryData(String service, MultiValueMap<String, String> params, Pageable pageable);
 
 }

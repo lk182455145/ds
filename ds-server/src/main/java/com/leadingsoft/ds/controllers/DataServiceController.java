@@ -1,10 +1,9 @@
 package com.leadingsoft.ds.controllers;
 
-import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.util.MultiValueMap;
@@ -14,10 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.leadingsoft.ds.dto.QueryResult;
-import com.leadingsoft.ds.dto.ResultDto;
-import com.leadingsoft.ds.entities.Application;
-import com.leadingsoft.ds.services.ApplicationService;
 import com.leadingsoft.ds.services.DataService;
 
 /**
@@ -42,81 +37,29 @@ import com.leadingsoft.ds.services.DataService;
 @RequestMapping(value = { "dcds/service", "service", "/s/dcds/service", "/ds/s/dcds/service" })
 public class DataServiceController {
 
-	@Autowired
-	private DataService dataService;
+    @Autowired
+    private DataService dataService;
 
-	@Autowired
-	private ApplicationService appService;
+    @GetMapping(value = "{serviceName}")
+    public Page<Map<String, Object>> query(
+            @PathVariable("serviceName") String service,
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @RequestParam MultiValueMap<String, String> params) {
+        params = remove(params);
+        try {
+            return dataService.queryData(service, params, pageable);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
-	@GetMapping(value = "{serviceName}", params = { "!rows" })
-	public ResultDto<QueryResult> query(
-			@PathVariable("serviceName") String service,
-			@RequestParam(value = "draw", required = false) String draw,
-			@RequestParam("token") String token,
-			@PageableDefault(page = 0, size = 10) Pageable pageable,
-			@RequestParam MultiValueMap<String, String> params) {
-		params = remove(params);
-		if (pageable.getPageSize() > 1000) {
-			return ResultDto.failure("The size param is to large");
-		}
-		if (!checnAuth(token)) {
-			return ResultDto.failure("The Token param is to error");
-		}
-		try {
-			return query(draw, service, params, pageable);
-		} catch (Exception e) {
-			return ResultDto.failure(e.getMessage());
-		}
-	}
+    private MultiValueMap<String, String> remove(MultiValueMap<String, String> params) {
+        params.remove("draw");
+        params.remove("token");
+        params.remove("page");
+        params.remove("rows");
+        params.remove("size");
+        return params;
+    }
 
-	@GetMapping(value = "{serviceName}", params = { "rows" })
-	public ResultDto<QueryResult> query(
-			@PathVariable("serviceName") String service,
-			@RequestParam(value = "draw", required = false) String draw,
-			@RequestParam("token") String token,
-			@RequestParam(value = "page", required = false, defaultValue = "1") int page,
-			@RequestParam(value = "rows", required = false, defaultValue = "10") int rows,
-			@RequestParam MultiValueMap<String, String> params) {
-		params = remove(params);
-
-		if (rows > 1000) {
-			return ResultDto.failure("The rows param is to large");
-		}
-		if (!checnAuth(token)) {
-			return ResultDto.failure("The Token param is to error");
-		}
-		Pageable pageable = PageRequest.of(page - 1, rows);
-		try {
-			return query(draw, service, params, pageable);
-		} catch (Exception e) {
-			return ResultDto.failure(e.getMessage());
-		}
-	}
-
-	private ResultDto<QueryResult> query(String draw, String service, MultiValueMap<String, String> params,
-			Pageable pageable) {
-		QueryResult result = dataService.queryData(service, params, pageable);
-		result.setDraw(draw);
-		return ResultDto.success(result);
-	}
-
-	private MultiValueMap<String, String> remove(MultiValueMap<String, String> params) {
-		params.remove("draw");
-		params.remove("token");
-		params.remove("page");
-		params.remove("rows");
-		params.remove("size");
-		return params;
-	}
-
-	// 检测应用是否授权
-	private boolean checnAuth(String token) {
-		List<Application> apps = appService.listAll();
-		for (Application app : apps) {
-			if (StringUtils.equalsIgnoreCase(app.getId(), token)) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

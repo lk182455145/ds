@@ -222,8 +222,6 @@
       if (this.svc.connectionId && this.svc.sql) {
         this.getColumns(this.svc).then(columns => {
           this.columns = columns
-        }).catch(err => {
-          console.error(err)
         })
       }
     }

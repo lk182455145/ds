@@ -64,7 +64,7 @@ public class SvcController {
 			@RequestParam(value = "search", required = false) String search,
 			@PageableDefault Pageable pageable) {
 			Page<Svc> results = svcService.list(search, pageable);
-			return results.map(svcConverter::toDto);
+			return results.map(svcConverter::toTableResultDto);
 	}
 
 	@PostMapping("meta")

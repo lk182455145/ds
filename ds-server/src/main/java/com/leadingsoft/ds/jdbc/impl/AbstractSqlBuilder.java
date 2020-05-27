@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -127,6 +128,13 @@ public abstract class AbstractSqlBuilder implements SqlBuilder, InitializingBean
 
         // 添加排序语句
         queryBuilder.append(" ORDER BY ");
+
+        // 构建排序语句
+        String orderProperties = buildOrder(pageable);
+        if (StringUtils.isNotBlank(orderProperties)) {
+            queryBuilder.append(orderProperties).append(",");
+        }
+
         List<Order> orders = svc.getOrders();
         Iterator<Order> io = orders.iterator();
         while (io.hasNext()) {
@@ -195,5 +203,15 @@ public abstract class AbstractSqlBuilder implements SqlBuilder, InitializingBean
     @Override
     public QuerySql getQuerySql(Svc svc, MultiValueMap<String, String> params, Pageable pageable) {
         return builderSql(svc, params, pageable);
+    }
+
+    private String buildOrder(Pageable pageable) {
+        List<String> orders = pageable.getSort().map(order -> {
+            return order.getProperty() + " "
+                    +
+                    order.getDirection().toString();
+        }).toList();
+        return StringUtils.join(orders, ",");
+
     }
 }

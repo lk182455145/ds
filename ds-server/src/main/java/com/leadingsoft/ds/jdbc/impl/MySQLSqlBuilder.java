@@ -25,8 +25,7 @@ public class MySQLSqlBuilder extends AbstractSqlBuilder implements SqlBuilder, I
 	}
 
 	@Override
-	protected String buildPagedSql(String sql, Pageable pageable) {
-		StringBuilder builder = new StringBuilder(sql);
+	protected String buildPagedSql(StringBuilder builder, Pageable pageable) {
 		builder.append(" limit ").append(pageable.getOffset()).append(",").append(pageable.getPageSize());
 		return builder.toString();
 	}

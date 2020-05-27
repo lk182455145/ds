@@ -46,7 +46,6 @@ public class DataServiceImpl implements DataService {
         DataSource dataSource = dataSourceService.get(cnn);
         // 根据数据库类型选择SQL构建器
         SqlBuilder sqlBuilder = sqlBuilderFactory.getBuilder(type);
-        // 构建查询语句
         QuerySql querySql = sqlBuilder.getQuerySql(svc, params, pageable);
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         Long count = jdbcTemplate.queryForObject(querySql.getCountSql(), querySql.getParameters(), Long.class);

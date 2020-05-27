@@ -15,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.util.MultiValueMap;
 
@@ -130,31 +132,16 @@ public abstract class AbstractSqlBuilder implements SqlBuilder, InitializingBean
         queryBuilder.append(" ORDER BY ");
 
         // 构建排序语句
-        String orderProperties = buildOrder(pageable);
-        if (StringUtils.isNotBlank(orderProperties)) {
-            queryBuilder.append(orderProperties).append(",");
-        }
-
-        List<Order> orders = svc.getOrders();
-        Iterator<Order> io = orders.iterator();
-        while (io.hasNext()) {
-            Order order = io.next();
-            queryBuilder.append(getColumnSplitCharStart()).append(order.getColumn()).append(getColumnSplitCharEnd())
-                    .append(' ').append(order.getDirection().toString());
-            if (io.hasNext()) {
-                queryBuilder.append(",");
-            }
-        }
+        queryBuilder.append(buildOrderBy(pageable.getSort().and(buildSort(svc.getOrders()))));
 
         // 添加分页语句
-
-        String pagedSql = buildPagedSql(queryBuilder.toString(), pageable);
+        String pagedSql = buildPagedSql(queryBuilder, pageable);
 
         QuerySqlImpl querySql = new QuerySqlImpl(countBuilder.toString(), pagedSql, parameterMap);
         return querySql;
     }
 
-    protected abstract String buildPagedSql(String string, Pageable pageable);
+    protected abstract String buildPagedSql(StringBuilder string, Pageable pageable);
 
     /**
      * 添加条件符号为in的参数相关的语句和参数列表
@@ -205,13 +192,26 @@ public abstract class AbstractSqlBuilder implements SqlBuilder, InitializingBean
         return builderSql(svc, params, pageable);
     }
 
-    private String buildOrder(Pageable pageable) {
-        List<String> orders = pageable.getSort().map(order -> {
-            return order.getProperty() + " "
-                    +
-                    order.getDirection().toString();
+    private Sort buildSort(List<Order> orders) {
+        Sort sort = Sort.unsorted();
+        for (Order order : orders) {
+            sort = sort.and(
+                    Sort.by(Direction.fromString(order.getDirection().toString()),
+                            order.getColumn()));
+        }
+        return sort;
+    }
+
+    private String buildOrderBy(Sort sort) {
+        List<String> orders = sort.map(order -> {
+            StringBuilder builder = new StringBuilder();
+            return builder.append(getColumnSplitCharStart())
+                    .append(order.getProperty())
+                    .append(getColumnSplitCharEnd())
+                    .append(SPACE)
+                    .append(order.getDirection())
+                    .toString();
         }).toList();
         return StringUtils.join(orders, ",");
-
     }
 }

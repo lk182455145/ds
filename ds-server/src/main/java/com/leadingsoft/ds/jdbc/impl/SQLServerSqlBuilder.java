@@ -9,26 +9,25 @@ import com.leadingsoft.ds.jdbc.SqlBuilder;
 @Component
 public class SQLServerSqlBuilder extends AbstractSqlBuilder implements SqlBuilder, InitializingBean {
 
-	@Override
-	protected char getColumnSplitCharStart() {
-		return '[';
-	}
+    @Override
+    protected char getColumnSplitCharStart() {
+        return '[';
+    }
 
-	@Override
-	protected char getColumnSplitCharEnd() {
-		return ']';
-	}
+    @Override
+    protected char getColumnSplitCharEnd() {
+        return ']';
+    }
 
-	@Override
-	protected DBType getDbType() {
-		return DBType.SQLSERVER;
-	}
+    @Override
+    protected DBType getDbType() {
+        return DBType.SQLSERVER;
+    }
 
-	@Override
-	protected String buildPagedSql(String sql, Pageable pageable) {
-		StringBuilder builder = new StringBuilder(sql);
-		builder.append(" OFFSET ").append(pageable.getOffset()).append(" ROWS FETCH NEXT ")
-				.append(pageable.getPageSize()).append(" ROWS ONLY");
-		return builder.toString();
-	}
+    @Override
+    protected String buildPagedSql(StringBuilder builder, Pageable pageable) {
+        builder.append(" OFFSET ").append(pageable.getOffset()).append(" ROWS FETCH NEXT ")
+                .append(pageable.getPageSize()).append(" ROWS ONLY");
+        return builder.toString();
+    }
 }

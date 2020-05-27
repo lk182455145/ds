@@ -44,7 +44,7 @@
 
       <el-collapse-item name="2">
         <template v-slot:title>
-          <h1>调解参数</h1>
+          <h1>条件参数</h1>
         </template>
         <ele-data-tables :data="svc.parameters">
           <el-table-column prop="column" label="列名称" />
@@ -80,7 +80,7 @@
       </el-collapse-item>
       <el-collapse-item name="3">
         <template v-slot:title>
-          <h1>排序列</h1>
+          <h1>默认排序</h1>
         </template>
 
         <ele-data-tables :data="svc.orders">

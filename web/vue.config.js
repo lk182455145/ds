@@ -1,3 +1,4 @@
+const path = require('path')
 const webpackProdConf = require('./config/webpack.prod.conf')
 const webpackDevConf = require('./config/webpack.dev.conf')
 // 如果使用测试环境，使用下面的代理配置
@@ -8,6 +9,7 @@ const proxy = require('./config/proxy_dev')
 const config = {
   assetsDir: process.env.ASSETS_DIR,
   publicPath: process.env.CONTEXT_PATH,
+  outputDir: path.resolve(__dirname, '..', 'ds-server/src/main/resources/static'),
   devServer: {
     port: 80,
     proxy

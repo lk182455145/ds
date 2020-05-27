@@ -26,8 +26,8 @@ export default new Vuex.Store({
       state.user = payload.user
     },
     addError (state, payload) {
-      let count = 1 + state.error.count
-      let message = payload
+      const count = 1 + state.error.count
+      const message = payload
       state.error = {
         count,
         message

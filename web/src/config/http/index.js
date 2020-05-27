@@ -19,10 +19,10 @@ http.interceptors.response.use(response => {
   return Promise.reject(error)
 })
 
-http.interceptors.response.use(({data}) => {
+http.interceptors.response.use(({ data }) => {
   return data
 }, error => {
-  let err = '与服务器交互时出现错误，错误码：' + error.response.status
+  const err = '与服务器交互时出现错误，错误码：' + error.response.status
   store.commit('addError', err)
   return Promise.reject(error)
 })

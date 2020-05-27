@@ -7,7 +7,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item prop="name" label="服务名称">
-            <el-input v-model="svc.name"/>
+            <el-input v-model="svc.name" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -30,7 +30,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="描述">
-            <el-input type="textarea" v-model="svc.description"/>
+            <el-input type="textarea" v-model="svc.description" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -38,11 +38,11 @@
       <el-row>
         <el-col :span="12">
           <el-form-item prop="sql" label="SQL语句">
-            <el-input type="textarea" v-model="svc.sql" @blur="getMeta()"/>
+            <el-input type="textarea" v-model="svc.sql" @blur="getMeta()" />
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item/>
+      <el-form-item />
       <div>
         <el-row>
           <el-col :span="24">条件列</el-col>
@@ -52,20 +52,22 @@
           <el-col :span="5">{{ parameter.column }}</el-col>
           <el-col :span="5">
             <el-select v-model="parameter.operator">
-              <el-option value="="/>
-              <el-option value=">"/>
-              <el-option value="<"/>
-              <el-option value=">="/>
-              <el-option value="<="/>
-              <el-option value="!="/>
-              <el-option label="部分包含" value="like"/>
-              <el-option label="选项之一" value="in"/>
+              <el-option value="=" />
+              <el-option value=">" />
+              <el-option value="<" />
+              <el-option value=">=" />
+              <el-option value="<=" />
+              <el-option value="!=" />
+              <el-option label="部分包含" value="like" />
+              <el-option label="选项之一" value="in" />
             </el-select>
           </el-col>
           <el-col :span="5">
-            <el-input v-model="parameter.parameterName"/>
+            <el-input v-model="parameter.parameterName" />
           </el-col>
-          <el-col :span="5"><a href="javascript:;" @click="removeParameter(index)">移除</a></el-col>
+          <el-col :span="5">
+            <a href="javascript:;" @click="removeParameter(index)">移除</a>
+          </el-col>
         </el-row>
       </div>
 
@@ -77,11 +79,13 @@
           <el-col :span="5">{{ order.column }}</el-col>
           <el-col :span="10">
             <el-select v-model="order.direction">
-              <el-option label="升序" value="ASC"/>
-              <el-option label="降序" value="DESC"/>
+              <el-option label="升序" value="ASC" />
+              <el-option label="降序" value="DESC" />
             </el-select>
           </el-col>
-          <el-col :span="5"><a href="javascript:;" @click="removeOrder(index)">移除</a></el-col>
+          <el-col :span="5">
+            <a href="javascript:;" @click="removeOrder(index)">移除</a>
+          </el-col>
         </el-row>
       </div>
 
@@ -91,17 +95,23 @@
           <el-button type="danger" @click="goback()">取消</el-button>
         </el-col>
       </el-row>
-
     </el-form>
 
     <el-row>
       <el-form>
         <ele-data-tables :data="columns">
-          <el-table-column prop="columnName" label="列名称"/>
-          <el-table-column prop="columnTypeName" label="数据类型"/>
+          <el-table-column prop="columnName" label="列名称" />
+          <el-table-column prop="columnTypeName" label="数据类型" />
+          <el-table-column label="说明">
+            <template v-slot="{row:{columnName}}">
+              <el-form-item>
+                <el-input v-model="svc.columns[columnName]" />
+              </el-form-item>
+            </template>
+          </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <a href="javascript:;" @click="addToParameter(scope.row)">添加到筛选</a>
+              <a href="javascript:;" @click="addToParameter(scope.row)">添加到筛选</a>&nbsp;
               <a href="javascript:;" @click="addToOrder(scope.row)">添加到排序</a>
             </template>
           </el-table-column>
@@ -122,11 +132,14 @@
     }
   })
   export default class SvcForm extends Vue {
-    @Prop({default: 'new'})
+    @Prop({ default: 'new' })
     id
+
     columns = []
     cnns = []
-    svc = {}
+    svc = {
+      columns: {}
+    }
 
     @Action('svc/get')
     getSvc
@@ -199,7 +212,7 @@
           this.$router.go(-1)
         })
       } else {
-        this.update({id: this.id, svc: this.svc}).then(svc => {
+        this.update({ id: this.id, svc: this.svc }).then(svc => {
           this.$router.go(-1)
         })
       }
@@ -221,5 +234,4 @@
   }
 </script>
 <style lang="less">
-
 </style>

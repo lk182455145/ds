@@ -1,15 +1,13 @@
 package com.leadingsoft.ds.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,81 +18,82 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class Application implements Serializable {
 
-	private static final long serialVersionUID = -3434258837235304253L;
+    private static final long serialVersionUID = -3434258837235304253L;
 
-	@Column(length = 32)
-	@Id
-	private String id;
+    @Column(name = "id_", length = 32)
+    @Id
+    private String id;
 
-	@Column(unique = true, nullable = false)
-	private String name;
+    @Column(name = "name_", unique = true, nullable = false, length = 100)
+    private String name;
 
-	private String description;
+    @Column(name = "description_", length = 100)
+    private String description;
 
-	@CreatedDate
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDate;
+    @CreatedDate
+    @Column(name = "create_date_")
+    private ZonedDateTime createDate;
 
-	@LastModifiedDate
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updateDate;
+    @LastModifiedDate
+    @Column(name = "update_date_")
+    private ZonedDateTime updateDate;
 
-	public Application() {
-		String id = UUID.randomUUID().toString();
-		this.id = StringUtils.replace(id, "-", "");
-	}
+    public Application() {
+        String id = UUID.randomUUID().toString();
+        this.id = StringUtils.replace(id, "-", "");
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public Date getCreateDate() {
-		return createDate;
-	}
+    public ZonedDateTime getCreateDate() {
+        return createDate;
+    }
 
-	public Date getUpdateDate() {
-		return updateDate;
-	}
+    public ZonedDateTime getUpdateDate() {
+        return updateDate;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Application other = (Application) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Application other = (Application) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
 
 }

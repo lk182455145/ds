@@ -16,16 +16,22 @@ import lombok.Setter;
 @Setter
 public class DbConnection extends AbstractEntity {
 
-	private static final long serialVersionUID = 8353459514057177389L;
+    private static final long serialVersionUID = 8353459514057177389L;
 
-	@Enumerated(EnumType.STRING)
-	private DBType dbType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "db_type_")
+    private DBType dbType;
 
-	@Column(unique = true, nullable = false)
-	private String name;
+    @Column(name = "name_", unique = true, nullable = false, length = 100)
+    private String name;
 
-	private String url;
-	private String username;
-	private String password;
+    @Column(name = "url_", length = 400)
+    private String url;
+
+    @Column(name = "username_", length = 100)
+    private String username;
+
+    @Column(name = "password_", length = 100)
+    private String password;
 
 }

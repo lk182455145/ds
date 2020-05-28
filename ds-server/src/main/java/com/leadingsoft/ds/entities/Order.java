@@ -17,12 +17,12 @@ import lombok.Setter;
 @Embeddable
 public class Order implements Serializable {
 
-	private static final long serialVersionUID = 5290684778590238497L;
+    private static final long serialVersionUID = 5290684778590238497L;
 
-	@Column(name = "column_")
-	private String column;
+    @Column(name = "column_", length = 200)
+    private String column;
 
-	@Column(name = "direction_")
-	@Enumerated(EnumType.STRING)
-	private Direction direction;
+    @Column(name = "direction_", length = 10)
+    @Enumerated(EnumType.STRING)
+    private Direction direction;
 }

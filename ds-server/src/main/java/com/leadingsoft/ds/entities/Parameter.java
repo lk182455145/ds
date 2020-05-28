@@ -13,12 +13,17 @@ import lombok.Setter;
 @Embeddable
 public class Parameter implements Serializable {
 
-	private static final long serialVersionUID = 2203811797498404695L;
+    private static final long serialVersionUID = 2203811797498404695L;
 
-	@Column(name = "column_")
-	private String column;
+    @Column(name = "column_", length = 100)
+    private String column;
 
-	private String operator;
+    @Column(name = "description_", length = 200)
+    private String description;
 
-	private String parameterName;
+    @Column(name = "operator_", length = 10)
+    private String operator;
+
+    @Column(name = "parameter_name_", length = 200)
+    private String parameterName;
 }

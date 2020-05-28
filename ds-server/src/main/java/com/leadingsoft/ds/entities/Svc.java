@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -31,7 +32,7 @@ public class Svc extends AbstractEntity {
     @ManyToOne
     private DbConnection connection;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "name_", unique = true, nullable = false)
     private String name;
 
     @Lob
@@ -43,6 +44,8 @@ public class Svc extends AbstractEntity {
     @Fetch(FetchMode.SUBSELECT)
     @CollectionTable(name = "service_parameters_", joinColumns = {
             @JoinColumn(name = "service_id_")
+    }, uniqueConstraints = {
+            @UniqueConstraint(columnNames = { "service_id_", "parameter_name_" })
     })
     private List<Parameter> parameters;
 
@@ -51,6 +54,8 @@ public class Svc extends AbstractEntity {
     @Fetch(FetchMode.SUBSELECT)
     @CollectionTable(name = "service_orders_", joinColumns = {
             @JoinColumn(name = "service_id_")
+    }, uniqueConstraints = {
+            @UniqueConstraint(columnNames = { "service_id_", "column_" })
     })
     private List<Order> orders;
 
@@ -67,6 +72,7 @@ public class Svc extends AbstractEntity {
     private Map<String, String> columns;
 
     @Lob
+    @Column(name = "description_")
     private String description;
 
 }

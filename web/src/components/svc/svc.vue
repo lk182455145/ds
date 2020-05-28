@@ -178,10 +178,9 @@
       if (this.id === 'new') {
         // do nothing
       } else {
-        (async () => {
-          this.svc = await this.getSvc(this.id)
-          this.columns = await this.getColumns(this.svc)
-        })()
+        this.getSvc(this.id)
+          .then(svc => (this.svc = svc))
+          .then(this.getMeta)
       }
     }
 
@@ -240,7 +239,7 @@
 
     getMeta () {
       if (this.svc.connectionId && this.svc.sql) {
-        this.getColumns(this.svc).then(columns => {
+        this.getColumns(this.svc).then(({ columns }) => {
           this.columns = columns
         })
       }

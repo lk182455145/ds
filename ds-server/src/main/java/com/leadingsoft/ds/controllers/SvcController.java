@@ -70,4 +70,13 @@ public class SvcController {
     public SqlMetaData metas(@RequestBody SvcDto svc) throws SQLException {
         return svcService.getMeta(svc);
     }
+
+    @GetMapping("meta/{id}")
+    public SqlMetaData metas(@PathVariable("id") Svc svc) {
+        try {
+            return svcService.getMeta(svc.getConnection(), svc.getSql());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

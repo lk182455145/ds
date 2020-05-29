@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.leadingsoft.ds.dto.SqlMetaData;
 import com.leadingsoft.ds.dto.SvcDto;
+import com.leadingsoft.ds.entities.DbConnection;
 import com.leadingsoft.ds.entities.Svc;
 
 /**
@@ -34,6 +35,8 @@ public interface SvcService extends CrudService<Svc, SvcDto, Long> {
      * @throws SQLException
      */
     public SqlMetaData getMeta(SvcDto svc) throws SQLException;
+
+    public SqlMetaData getMeta(DbConnection cnn, String sql) throws SQLException;
 
     /**
      * 分页获取服务信息

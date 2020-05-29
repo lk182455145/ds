@@ -5,6 +5,8 @@
         <h1>服务信息</h1>
       </template>
       <div>服务名称: {{svc.name}}</div>
+      <div>调用地址：<a target="_blank" :href="url">{{url}}</a>&nbsp; <a href="javascript:void(0)" @click="copy">点击复制</a>
+      </div>
       <div>服务描述：</div>
       <div>{{svc.description}}</div>
     </el-collapse-item>
@@ -40,6 +42,7 @@
   import Vue from 'vue'
   import {Component, Prop} from 'vue-property-decorator'
   import EleDataTables from 'element-datatables'
+  import qs from 'qs'
 
   const svcUrl = CONTEXT_PATH + 'svc'
   @Component({
@@ -52,7 +55,17 @@
     @Prop({required: true})
     id
 
-    svc = {}
+    get url () {
+      return `${CONTEXT_PATH}service/${this.svc.name}`
+    }
+
+    svc = {
+      requiredParameters: [],
+      parameters: [],
+      columns: {},
+      name: ''
+    }
+
     meta = {}
 
     get parameters () {
@@ -71,6 +84,14 @@
     created () {
       this.$http.get(`${svcUrl}/${this.id}`).then(svc => (this.svc = svc))
       this.$http.get(`${svcUrl}/meta/${this.id}`).then(meta => (this.meta = meta))
+    }
+
+    copy () {
+      const p = this.parameters.reduce((acc, {parameterName}) => ({
+        ...acc,
+        [parameterName]: parameterName
+      }), {})
+      navigator.clipboard.writeText(`${this.url}?${qs.stringify(p)}`)
     }
   }
 </script>

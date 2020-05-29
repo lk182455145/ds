@@ -79,8 +79,6 @@
       } else {
         this.load(this.id).then(data => {
           this.app = data
-        }).catch(err => {
-          console.log('读取数据发生错误', err)
         })
       }
     }

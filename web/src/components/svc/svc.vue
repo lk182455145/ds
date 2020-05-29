@@ -42,9 +42,25 @@
         </el-row>
       </el-collapse-item>
 
+      <el-collapse-item name="5">
+        <template v-slot:title>
+          <h1>必要参数</h1>
+        </template>
+        <ele-data-tables :data="svc.requiredParameters">
+          <el-table-column prop="parameterName" label="参数名称" />
+          <el-table-column label="参数说明">
+            <template v-slot="{row}">
+              <el-form-item label-width="0px">
+                <el-input v-model="row.description" />
+              </el-form-item>
+            </template>
+          </el-table-column>
+        </ele-data-tables>
+      </el-collapse-item>
+
       <el-collapse-item name="2">
         <template v-slot:title>
-          <h1>条件参数</h1>
+          <h1>可选参数</h1>
         </template>
         <ele-data-tables :data="svc.parameters">
           <el-table-column prop="column" label="列名称" />
@@ -71,9 +87,16 @@
               </el-form-item>
             </template>
           </el-table-column>
+          <el-table-column label="参数说明">
+            <template v-slot="{row}">
+              <el-form-item label-width="0px">
+                <el-input v-model="row.description" />
+              </el-form-item>
+            </template>
+          </el-table-column>
           <el-table-column label="操作">
             <template v-slot="{row}">
-              <a href="javascript:;" @click="{{removeParameter(row)}}">移除</a>
+              <a href="javascript:;" @click="removeParameter(row)">移除</a>
             </template>
           </el-table-column>
         </ele-data-tables>
@@ -107,7 +130,7 @@
         <template v-slot:title>
           <h1>输出字段</h1>
         </template>
-        <ele-data-tables :data="columns">
+        <ele-data-tables :data="meta.columns">
           <el-table-column prop="columnLabel" label="列名称" />
           <el-table-column prop="columnTypeName" label="数据类型" />
           <el-table-column label="说明">
@@ -134,9 +157,9 @@
 </template>
 <script>
   import Vue from 'vue'
-  import { Component, Prop } from 'vue-property-decorator'
+  import {Component, Prop} from 'vue-property-decorator'
   import EleDataTables from 'element-datatables'
-  import { Action } from 'vuex-class'
+  import {Action} from 'vuex-class'
 
   @Component({
     components: {
@@ -144,15 +167,22 @@
     }
   })
   export default class SvcForm extends Vue {
-    @Prop({ default: 'new' })
+    @Prop({default: 'new'})
     id
 
-    active = ['1', '2', '3', '4']
+    active = ['1', '2', '3', '4', '5']
 
-    columns = []
+    // 解析出的列
+    meta = {
+      columns: []
+    }
+
     cnns = []
     svc = {
-      columns: {}
+      columns: {},
+      orders: [],
+      // 服务必要参数
+      requiredParameters: []
     }
 
     @Action('svc/get')
@@ -207,10 +237,6 @@
       })
     }
 
-    vis (obj) {
-      return obj.row
-    }
-
     removeOrder (row) {
       const index = this.svc.orders.findIndex(item => item === row)
       this.svc.orders.splice(index, 1)
@@ -231,7 +257,10 @@
           this.$router.go(-1)
         })
       } else {
-        this.update({ id: this.id, svc: this.svc }).then(svc => {
+        this.update({
+          id: this.id,
+          svc: this.svc
+        }).then(svc => {
           this.$router.go(-1)
         })
       }
@@ -239,10 +268,26 @@
 
     getMeta () {
       if (this.svc.connectionId && this.svc.sql) {
-        this.getColumns(this.svc).then(({ columns }) => {
-          this.columns = columns
+        this.getColumns(this.svc).then(meta => {
+          this.reCalRequiredParameters(meta.parameters)
+          this.meta = meta
         })
       }
+    }
+
+    reCalRequiredParameters (parameters) {
+      if (!this.svc.requiredParameters) {
+        this.svc.requiredParameters = []
+      }
+      // 清理已有参数列表
+      this.svc.requiredParameters = this.svc.requiredParameters.filter(({parameterName}) => parameters.includes(parameterName))
+      // 重新添加新的参数
+      const newParameters = parameters.filter(parameter => this.svc.requiredParameters.findIndex(({parameterName}) => parameterName === parameter) < 0)
+        .map(parameter => ({
+          parameterName: parameter,
+          description: ''
+        }))
+      this.svc.requiredParameters.push(...newParameters)
     }
 
     goback () {

@@ -14,6 +14,7 @@ public class SvcDto implements Serializable {
     private String sql;
     private String name;
     private String description;
+    private List<ParameterDto> requiredParameters;
     private List<ParameterDto> parameters;
     private List<OrderDto> orders;
     private Map<String, String> columns;

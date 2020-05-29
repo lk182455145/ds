@@ -31,5 +31,10 @@ export default new Router({
     name: 'svcForm',
     props: true,
     component: () => import('@/components/svc/svc')
+  }, {
+    path: '/svc/view/:id',
+    name: 'svcView',
+    props: true,
+    component: () => import('@/components/svc/SvcViewer')
   }]
 })

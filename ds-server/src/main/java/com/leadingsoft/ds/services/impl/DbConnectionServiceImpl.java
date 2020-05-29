@@ -31,71 +31,70 @@ import com.leadingsoft.ds.services.DbConnectionService;
 @Service
 public class DbConnectionServiceImpl implements DbConnectionService {
 
-	@Autowired
-	private DbConnectionRepository cnnRepository;
+    @Autowired
+    private DbConnectionRepository cnnRepository;
 
-	@Autowired
-	private DbConnectionConverter cnnConverter;
+    @Autowired
+    private DbConnectionConverter cnnConverter;
 
-	@Autowired
-	private DataSourceService dataSourceService;
+    @Autowired
+    private DataSourceService dataSourceService;
 
-	@Override
-	@Transactional
-	@CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
-	public DbConnection save(DbConnectionDto dto) {
-		DbConnection cnn = new DbConnection();
-		cnnConverter.copyProperties(cnn, dto);
-		return cnnRepository.save(cnn);
-	}
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
+    public DbConnection save(DbConnectionDto dto) {
+        DbConnection cnn = new DbConnection();
+        cnnConverter.copyProperties(cnn, dto);
+        return cnnRepository.save(cnn);
+    }
 
-	@Override
-	@Transactional
-	@CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
-	public Optional<DbConnection> delete(Long id) {
-		Optional<DbConnection> cnn = cnnRepository.findById(id);
-		cnnRepository.deleteById(id);
-		closeConnection(cnn.get());
-		return cnn;
-	}
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
+    public void delete(Long id) {
+        Optional<DbConnection> cnn = cnnRepository.findById(id);
+        cnnRepository.deleteById(id);
+        closeConnection(cnn.get());
+    }
 
-	@Override
-	@Transactional
-	@CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
-	public DbConnection update(Long id, DbConnectionDto dto) {
-		DbConnection cnn = cnnRepository.findById(id).get();
-		closeConnection(cnn);
-		cnnConverter.copyProperties(cnn, dto);
-		return cnn;
-	}
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
+    public DbConnection update(Long id, DbConnectionDto dto) {
+        DbConnection cnn = cnnRepository.findById(id).get();
+        closeConnection(cnn);
+        cnnConverter.copyProperties(cnn, dto);
+        return cnn;
+    }
 
-	@Override
-	public Optional<DbConnection> get(Long id) {
-		return cnnRepository.findById(id);
-	}
+    @Override
+    public Optional<DbConnection> get(Long id) {
+        return cnnRepository.findById(id);
+    }
 
-	/**
-	 * 关闭连接池中的连接
-	 * 
-	 * @param id
-	 */
-	private void closeConnection(DbConnection cnn) {
-		dataSourceService.remove(cnn.getDbType().toString(), cnn.getUrl(), cnn.getUsername(), cnn.getPassword());
-	}
+    /**
+     * 关闭连接池中的连接
+     * 
+     * @param id
+     */
+    private void closeConnection(DbConnection cnn) {
+        dataSourceService.remove(cnn.getDbType().toString(), cnn.getUrl(), cnn.getUsername(), cnn.getPassword());
+    }
 
-	@Override
-	public Page<DbConnection> list(Pageable pageable) {
-		return cnnRepository.findAll(pageable);
-	}
+    @Override
+    public Page<DbConnection> list(Pageable pageable) {
+        return cnnRepository.findAll(pageable);
+    }
 
-	@Override
-	public List<DbConnection> listAll() {
-		return cnnRepository.findAll();
-	}
+    @Override
+    public List<DbConnection> listAll() {
+        return cnnRepository.findAll();
+    }
 
-	@Override
-	public DbConnection patch(@NotNull Long id, DbConnectionDto dto) {
-		throw new NotImplementedException("该方法未实现");
-	}
+    @Override
+    public DbConnection patch(@NotNull Long id, DbConnectionDto dto) {
+        throw new NotImplementedException("该方法未实现");
+    }
 
 }

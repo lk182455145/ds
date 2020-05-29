@@ -2,8 +2,8 @@
   <div>
     <router-link class="button button-primary" to="/app/new">新建应用</router-link>
     <ele-data-tables :ajax="tableUrl">
-      <el-table-column prop="name" label="应用名称"/>
-      <el-table-column prop="id" label="应用TOKEN"/>
+      <el-table-column prop="name" label="应用名称" />
+      <el-table-column prop="id" label="应用TOKEN" />
       <el-table-column label="创建日期">
         <template slot-scope="scope">
           <div>{{ scope.row.createDate|today }}</div>
@@ -30,7 +30,7 @@
     },
     filters: {
       today (val) {
-        let date = new Date(val)
+        const date = new Date(val)
         return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
       }
     }

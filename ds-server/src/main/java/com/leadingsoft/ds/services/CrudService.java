@@ -1,9 +1,13 @@
 package com.leadingsoft.ds.services;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
+
+import com.leadingsoft.ds.dto.SqlMetaData;
+import com.leadingsoft.ds.entities.DbConnection;
 
 public interface CrudService<Model, Dto, PK> {
 	/**
@@ -20,7 +24,7 @@ public interface CrudService<Model, Dto, PK> {
 	 * @param id
 	 * @return
 	 */
-	public Optional<Model> delete(@NotNull PK id);
+	public void delete(@NotNull PK id);
 
 	/**
 	 * 修改一条信息
@@ -46,4 +50,5 @@ public interface CrudService<Model, Dto, PK> {
 	 * @return
 	 */
 	public Optional<Model> get(@NotNull PK id);
+
 }

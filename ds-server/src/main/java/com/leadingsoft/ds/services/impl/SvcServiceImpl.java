@@ -6,7 +6,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.sql.DataSource;
@@ -74,18 +73,8 @@ public class SvcServiceImpl implements SvcService {
     @Override
     @Transactional
     @CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
-    public Optional<Svc> delete(Long id) {
-        Optional<Svc> svc = svcRepository.findById(id);
-        if (svc.isPresent()) {
-            Svc svc_ = svc.get();
-            svc_.getOrders();
-            svc_.getParameters();
-        }
-
-        if (!Objects.isNull(svc)) {
-            svcRepository.deleteById(id);
-        }
-        return svc;
+    public void delete(Long id) {
+        svcRepository.deleteById(id);
     }
 
     @Override
@@ -115,8 +104,14 @@ public class SvcServiceImpl implements SvcService {
     public SqlMetaData getMeta(SvcDto svc) throws SQLException {
         DbConnection cnn = cnnRepo.findById(svc.getConnectionId()).get();
         List<ColumnMetaData> columnMetas = getColumnMetas(cnn, svc.getSql());
-        
         List<String> parameterNames = getParameterNames(svc.getSql());
+        return new SqlMetaData(parameterNames, columnMetas);
+    }
+
+    @Override
+    public SqlMetaData getMeta(DbConnection cnn, String sql) throws SQLException {
+        List<ColumnMetaData> columnMetas = getColumnMetas(cnn, sql);
+        List<String> parameterNames = getParameterNames(sql);
         return new SqlMetaData(parameterNames, columnMetas);
     }
 

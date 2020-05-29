@@ -19,6 +19,7 @@ public class ParameterConverter implements Converter<Parameter, ParameterDto> {
 		ParameterDto dto = new ParameterDto();
 		dto.setColumn(model.getColumn());
 		dto.setOperator(model.getOperator());
+		dto.setDescription(model.getDescription());
 		dto.setParameterName(model.getParameterName());
 		return dto;
 	}
@@ -28,6 +29,7 @@ public class ParameterConverter implements Converter<Parameter, ParameterDto> {
 		model.setColumn(dto.getColumn());
 		model.setOperator(dto.getOperator());
 		model.setParameterName(dto.getParameterName());
+		model.setDescription(dto.getDescription());
 		return model;
 	}
 

@@ -26,4 +26,5 @@ public class Parameter implements Serializable {
 
     @Column(name = "parameter_name_", length = 200)
     private String parameterName;
+
 }

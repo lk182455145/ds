@@ -49,6 +49,16 @@ public class Svc extends AbstractEntity {
     })
     private List<Parameter> parameters;
 
+    @ElementCollection
+    @Embedded
+    @Fetch(FetchMode.SUBSELECT)
+    @CollectionTable(name = "service_required_parameters_", joinColumns = {
+            @JoinColumn(name = "service_id_")
+    }, uniqueConstraints = {
+            @UniqueConstraint(columnNames = { "service_id_", "parameter_name_" })
+    })
+    private List<Parameter> requiredParameters;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Embedded
     @Fetch(FetchMode.SUBSELECT)

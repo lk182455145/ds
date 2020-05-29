@@ -27,6 +27,7 @@ public class SvcConverter implements Converter<Svc, SvcDto> {
             dto.setName(model.getName());
             dto.setOrders(orderConverter.toDto(model.getOrders()));
             dto.setParameters(parameterConverter.toDto(model.getParameters()));
+            dto.setRequiredParameters(parameterConverter.toDto(model.getRequiredParameters()));
             dto.setSql(model.getSql());
             dto.setDescription(model.getDescription());
             dto.setConnectionId(model.getConnection().getId());
@@ -41,6 +42,7 @@ public class SvcConverter implements Converter<Svc, SvcDto> {
         model.setSql(dto.getSql());
         model.setOrders(orderConverter.toModel(dto.getOrders()));
         model.setParameters(parameterConverter.toModel(dto.getParameters()));
+        model.setRequiredParameters(parameterConverter.toModel(dto.getRequiredParameters()));
         model.setDescription(dto.getDescription());
         model.setColumns(dto.getColumns());
         return model;

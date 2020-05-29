@@ -13,4 +13,6 @@ public class ParameterDto implements Serializable {
 	private String operator;
 
 	private String parameterName;
+	
+	private String description;
 }

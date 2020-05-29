@@ -6,7 +6,7 @@
     <el-row>
       <el-col :span="12">
         <el-form-item label="连接名称" prop="name">
-          <el-input v-model="cnn.name"/>
+          <el-input v-model="cnn.name" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -15,8 +15,8 @@
       <el-col :span="12">
         <el-form-item label="数据库类型" prop="name">
           <el-select v-model="cnn.dbType">
-            <el-option key="SQLSERVER" value="SQLSERVER"/>
-            <el-option key="MYSQL" value="MYSQL"/>
+            <el-option key="SQLSERVER" value="SQLSERVER" />
+            <el-option key="MYSQL" value="MYSQL" />
           </el-select>
         </el-form-item>
       </el-col>
@@ -25,7 +25,7 @@
     <el-row>
       <el-col :span="12">
         <el-form-item label="连接URL" prop="name">
-          <el-input v-model="cnn.url"/>
+          <el-input v-model="cnn.url" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -33,14 +33,14 @@
     <el-row>
       <el-col :span="12">
         <el-form-item label="用户名" prop="name">
-          <el-input v-model="cnn.username"/>
+          <el-input v-model="cnn.username" />
         </el-form-item>
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="12">
         <el-form-item label="密码" prop="name">
-          <el-input type="password" v-model="cnn.password"/>
+          <el-input type="password" v-model="cnn.password" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -63,6 +63,7 @@
   export default class CnnForm extends Vue {
     @Prop({default: 'new'})
     id
+
     cnn = {}
 
     @Action('cnn/get')

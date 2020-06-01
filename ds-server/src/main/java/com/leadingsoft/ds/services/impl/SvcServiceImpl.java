@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +62,7 @@ public class SvcServiceImpl implements SvcService {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
+    @CacheEvict(cacheNames = {"svcCache", "resultCache"}, allEntries = true)
     public Svc save(SvcDto dto) {
         Svc svc = new Svc();
         svcConverter.copyProperties(svc, dto);
@@ -72,14 +74,14 @@ public class SvcServiceImpl implements SvcService {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
+    @CacheEvict(cacheNames = {"svcCache", "resultCache"}, allEntries = true)
     public void delete(Long id) {
         svcRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = { "svcCache", "resultCache" }, allEntries = true)
+    @CacheEvict(cacheNames = {"svcCache", "resultCache"}, allEntries = true)
     public Svc update(Long id, SvcDto dto) {
         Svc svc = svcRepository.getOne(id);
         svcConverter.copyProperties(svc, dto);
@@ -105,14 +107,14 @@ public class SvcServiceImpl implements SvcService {
         DbConnection cnn = cnnRepo.findById(svc.getConnectionId()).get();
         List<ColumnMetaData> columnMetas = getColumnMetas(cnn, svc.getSql());
         List<String> parameterNames = getParameterNames(svc.getSql());
-        return new SqlMetaData(parameterNames, columnMetas);
+        return new SqlMetaData(new LinkedHashSet<>(parameterNames), columnMetas);
     }
 
     @Override
     public SqlMetaData getMeta(DbConnection cnn, String sql) throws SQLException {
         List<ColumnMetaData> columnMetas = getColumnMetas(cnn, sql);
         List<String> parameterNames = getParameterNames(sql);
-        return new SqlMetaData(parameterNames, columnMetas);
+        return new SqlMetaData(new LinkedHashSet(parameterNames), columnMetas);
     }
 
     @Override
@@ -139,7 +141,7 @@ public class SvcServiceImpl implements SvcService {
 
     /**
      * 获取列信息
-     * 
+     *
      * @param dbConnection
      * @param sql
      * @return
@@ -149,7 +151,7 @@ public class SvcServiceImpl implements SvcService {
         String metaSql = NamedParameterUtils.parseSqlStatementIntoString(sql);
         DataSource dataSource = dataSourceService.get(dbConnection);
         try (Connection cnn = dataSource.getConnection();
-                PreparedStatement statement = cnn.prepareStatement(metaSql)) {
+             PreparedStatement statement = cnn.prepareStatement(metaSql)) {
             ResultSetMetaData metaData = statement.getMetaData();
             int columnCount = metaData.getColumnCount();
             List<ColumnMetaData> result = new LinkedList<ColumnMetaData>();
@@ -166,4 +168,5 @@ public class SvcServiceImpl implements SvcService {
         ParsedSql ps = SqlUtils.parseSqlStatement(sql);
         return ps.getParameterNames();
     }
+
 }

@@ -2,6 +2,7 @@ package com.leadingsoft.ds.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import lombok.Data;
 
@@ -17,13 +18,13 @@ public class SqlMetaData implements Serializable {
     /**
      * 语句中的必填参数
      */
-    private List<String> parameters;
+    private Set<String> parameters;
     /**
      * 语句的输出列信息
      */
     private List<ColumnMetaData> columns;
 
-    public SqlMetaData(List<String> parameters, List<ColumnMetaData> columns) {
+    public SqlMetaData(Set<String> parameters, List<ColumnMetaData> columns) {
         super();
         this.parameters = parameters;
         this.columns = columns;

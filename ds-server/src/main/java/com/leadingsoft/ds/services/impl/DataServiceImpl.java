@@ -53,7 +53,6 @@ public class DataServiceImpl implements DataService {
                     querySql.getParameters());
             return new PageImpl<>(content, pageable, count);
         }).orElseThrow(DataNotExistException::new);
-
     }
 
 }

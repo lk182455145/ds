@@ -1,19 +1,20 @@
 package com.leadingsoft.ds.controllers;
 
-import java.util.Map;
-
+import com.leadingsoft.ds.services.DataService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.leadingsoft.ds.services.DataService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 数据集服务的相应请求<br />
@@ -24,17 +25,15 @@ import com.leadingsoft.ds.services.DataService;
  * 接口会根据请求参数中是否有rows参数决定使用哪种组合。<br />
  * 意思就是，当我的请求参数中不带rows参数时，会默认使用page,size作为分页参数,<br />
  * 在该接口模式下，page的最小值是0,即page=0获取第一页,page=2获取第三页<br />
- * 
+ * <p>
  * size和rows的默认大小是10,最大值不能超过1000
- * 
- * @author LiDong
  *
+ * @author LiDong
  * @see Pageable
  * @see PageabelDefault
- * 
  */
 @RestController
-@RequestMapping(value = { "dcds/service", "service", "/s/dcds/service", "/ds/s/dcds/service" })
+@RequestMapping(value = {"dcds/service", "service", "/s/dcds/service", "/ds/s/dcds/service"})
 public class DataServiceController {
 
     @Autowired
@@ -45,21 +44,30 @@ public class DataServiceController {
             @PathVariable("serviceName") String service,
             @PageableDefault(page = 0, size = 10) Pageable pageable,
             @RequestParam MultiValueMap<String, String> params) {
-        params = remove(params);
-        try {
-            return dataService.queryData(service, params, pageable);
-        } catch (Exception e) {
-            throw e;
-        }
+        return dataService.queryData(service, rebuildParams(params), pageable);
     }
 
-    private MultiValueMap<String, String> remove(MultiValueMap<String, String> params) {
-        params.remove("draw");
-        params.remove("token");
-        params.remove("page");
-        params.remove("rows");
-        params.remove("size");
-        return params;
+    /**
+     * 移除白痴参数
+     *
+     * @param params
+     * @return
+     */
+    private MultiValueMap<String, String> rebuildParams(MultiValueMap<String, String> params) {
+        List<String> unusedKeys = asList("draw", "token", "page", "rows", "size");
+        LinkedMultiValueMap<String, String> result = new LinkedMultiValueMap<>();
+        params.forEach((key, values) -> {
+            if (!unusedKeys.contains(key)) {
+                List<String> last = values.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
+                if (CollectionUtils.isNotEmpty(last)) {
+                    result.put(key, last);
+                }
+            }
+        });
+        return result;
     }
 
+    private <T> List<T> asList(T... items) {
+        return Arrays.asList(items);
+    }
 }
